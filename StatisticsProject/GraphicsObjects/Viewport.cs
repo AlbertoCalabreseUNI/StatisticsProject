@@ -27,6 +27,9 @@ namespace StatisticsProject.GraphicsObjects
         public int Interval = 10;
         public int lineLength;
 
+        public FontFamily FontFamily = new FontFamily("Arial");
+        public Font Font;
+
         //Booleans to decide which operation to do
         public bool dragMode;
         public bool resizeMode;
@@ -48,10 +51,10 @@ namespace StatisticsProject.GraphicsObjects
         //List of DataSets for each Chart Type
         #region DEFAULT HISTOGRAMS */
         //Let's create a DataSet of Random Elements and then Compute an Histogram
-        public int MinWeight = 50;
+        public int MinWeight = 40;
         public int MaxWeight = 100;
-        public int MinHeight = 150;
-        public int MaxHeight = 190;
+        public int MinHeight = 140;
+        public int MaxHeight = 200;
         public int NumberOfStudents;
 
         public Histogram StudentHistogram;
@@ -72,6 +75,7 @@ namespace StatisticsProject.GraphicsObjects
             G.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
             this.lineLength = this.Area.Height / this.Interval;
+            this.Font = new Font(this.FontFamily, 10, FontStyle.Regular, GraphicsUnit.Pixel);
 
             //Mode initialization
             this.dragMode = false;
@@ -95,49 +99,102 @@ namespace StatisticsProject.GraphicsObjects
             /*  Default Histogram = 0
              *  Top Vertical Histogram = 1
              *  Right Edge Horizontal Histogram = 2
-             *  ScatterPlot = 3
+             *  Both Top and Right Histograms = 3
              *  ... = 4
              */
 
             switch (Form1.GraphTypeToDraw)
             {
-                case 0:
-                    //Let's avoid repopulating all the Lists everytime we move the Viewport
-                    if(this.XIntervals.Count == 0)
-                    {
-                        this.XIntervals = new List<Interval>();
-                        for (int i = 0; i < this.MaxWeight - this.MinWeight; i += this.Interval)
-                            XIntervals.Add(new Interval(this.MinWeight + i, this.MinWeight + i + this.Interval));
-                    }
-                        
-                    if(this.YIntervals.Count == 0)
-                    {
-                        //new Interval(50 + 0, 50 + 0 + 10)
-                        for (int i = 0; i < this.MaxHeight - this.MinHeight; i += this.Interval)
-                            YIntervals.Add(new Interval(this.MinHeight + i, this.MinHeight + i + this.Interval));
-                    }
-
-                    if(this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
-                    {
-                        this.DataSet = RandomGenerator.GenerateRandomStudentsList(this.NumberOfStudents, this.MinWeight, this.MaxWeight, this.MinHeight, this.MaxHeight);
-                        this.StudentHistogram = new Histogram(this.DataSet, this.XIntervals, this.YIntervals);
-                    }
-
-                    this.RectanglesToDraw = this.StudentHistogram.ComputeDefaultHistogram(this, 0/*0 = X Variable, 1 = Y Variable*/);
-
-                    foreach (Rectangle Rectangle in this.RectanglesToDraw)
-                    {
-                        this.G.DrawRectangles(this.BorderColor, this.RectanglesToDraw.ToArray());
-                        this.G.FillRectangles(Brushes.Red, this.RectanglesToDraw.ToArray());
-                    }
-                    break;
-                case 1:
-                    //this.DrawLines();
-                    break;
-                case 2:     //Paths
+                case 0: case 1: case 2: case 3:
+                    this.DrawIntervals();
+                    this.DrawHistogram(Form1.GraphTypeToDraw);
                     break;
                 default:
                     break;
+            }
+        }
+        #endregion
+
+        #region Chart Drawing Functions
+        public void DrawIntervals()
+        {
+            if(this.XIntervals.Count != 0)
+            {
+                for(int i = 0; i <= this.XIntervals.Count; i++)
+                {
+                    Point P1 = new Point(this.Area.X + (i * (this.Area.Width / this.XIntervals.Count)), this.Area.Y + this.Area.Height - 5);
+                    Point P2 = new Point(this.Area.X + (i * (this.Area.Width / this.XIntervals.Count)), this.Area.Y + this.Area.Height + 5);
+                    G.DrawLine(Pens.Black, P1, P2);
+                    //"Hardcoded" fix for more pleasant rendering of Intervals
+                    if(i != this.XIntervals.Count) G.DrawString(XIntervals[i].LowerBound.ToString(), this.Font, Brushes.Black, P2);
+                    else G.DrawString(XIntervals[i-1].UpperBound.ToString(), this.Font, Brushes.Black, P2);
+                }
+            }
+            //We do not want to draw Y intervals when we draw the classical Histogram, we want to draw count
+            if(Form1.GraphTypeToDraw == 0)
+            {
+                return;
+            }
+            if (this.YIntervals.Count != 0)
+            {
+                for (int i = 0; i <= this.YIntervals.Count; i++)
+                {
+                    Point P1 = new Point(this.Area.X - 5, this.Area.Y + (i * (this.Area.Height / this.YIntervals.Count)));
+                    Point P2 = new Point(this.Area.X + 5, this.Area.Y + (i * (this.Area.Height / this.YIntervals.Count)));
+                    G.DrawLine(Pens.Black, P1, P2);
+                    //"Hardcoded" fix for more pleasant rendering of Intervals
+                    if (i != this.YIntervals.Count) G.DrawString(YIntervals[YIntervals.Count - i - 1].UpperBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                    else G.DrawString(YIntervals[0].LowerBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                }
+            }
+        }
+        public void DrawHistogram(int GraphType)
+        {
+            //Let's avoid repopulating all the Lists everytime we move the Viewport
+            if (this.XIntervals.Count == 0)
+            {
+                this.XIntervals = new List<Interval>();
+                for (int i = 0; i < this.MaxWeight - this.MinWeight; i += this.Interval)
+                    XIntervals.Add(new Interval(this.MinWeight + i, this.MinWeight + i + this.Interval));
+            }
+
+            if (this.YIntervals.Count == 0)
+            {
+                //new Interval(50 + 0, 50 + 0 + 10)
+                for (int i = 0; i < this.MaxHeight - this.MinHeight; i += this.Interval)
+                    YIntervals.Add(new Interval(this.MinHeight + i, this.MinHeight + i + this.Interval));
+            }
+
+            if (this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
+            {
+                this.DataSet = RandomGenerator.GenerateRandomStudentsList(this.NumberOfStudents, this.MinWeight, this.MaxWeight, this.MinHeight, this.MaxHeight);
+                this.StudentHistogram = new Histogram(this.DataSet, this.XIntervals, this.YIntervals);
+            }
+
+            switch(Form1.GraphTypeToDraw)
+            {
+                case 0:
+                    this.RectanglesToDraw = this.StudentHistogram.ComputeDefaultHistogram(this, 0/*0 = X Variable, 1 = Y Variable*/);
+                    break;
+                case 1:
+                    this.RectanglesToDraw = this.StudentHistogram.ComputeXTopHistogram(this);
+                    break;
+                case 2:
+                    this.RectanglesToDraw = this.StudentHistogram.ComputeYHorizontalHistogram(this);
+                    break;
+                case 3:
+                    //We simply draw both XTop and YHorizontal
+                    this.RectanglesToDraw = this.StudentHistogram.ComputeXTopHistogram(this);
+                    this.RectanglesToDraw.AddRange(this.StudentHistogram.ComputeYHorizontalHistogram(this));
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (Rectangle Rectangle in this.RectanglesToDraw)
+            {
+                this.G.DrawRectangles(this.BorderColor, this.RectanglesToDraw.ToArray());
+                this.G.FillRectangles(Brushes.Red, this.RectanglesToDraw.ToArray());
             }
         }
         #endregion
