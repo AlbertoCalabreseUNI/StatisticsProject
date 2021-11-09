@@ -12,7 +12,7 @@ namespace StatisticsProject.Utils
 {
     public class WindowToViewportConverter
     {
-        public static List<Point> WorldToViewportPointConversion(Viewport Viewport, List<DataPoint> PointsToConvert)
+        public static List<Point> WorldToViewportPointsConversion(Viewport Viewport, List<DataPoint> PointsToConvert)
         {
             List<Point> ConvertedPoints = new List<Point>();
 

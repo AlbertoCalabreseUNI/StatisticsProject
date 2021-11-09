@@ -105,7 +105,8 @@ namespace StatisticsProject.GraphicsObjects
              *  Top Vertical Histogram = 1
              *  Right Edge Horizontal Histogram = 2
              *  Both Top and Right Histograms = 3
-             *  ... = 4
+             *  Scatterplot + Both top and Right Histograms = 4
+             *  RegressionLines + Scatterplot + Both top and Right Histograms = 5
              */
 
             switch (Form1.GraphTypeToDraw)
@@ -117,6 +118,12 @@ namespace StatisticsProject.GraphicsObjects
                 case 4: //To Draw a Scatterplot I need to generate the data from the Histogram
                     this.DrawHistogram(3);
                     this.DrawScatterPlot();
+                    this.DrawIntervals();
+                    break;
+                case 5:
+                    this.DrawHistogram(3);
+                    this.DrawScatterPlot();
+                    this.DrawRegressionLines(2); /* 0 = X Axis Only, 1 = Y Axis Only, 2 =  Both*/
                     this.DrawIntervals();
                     break;
                 default:
@@ -254,6 +261,14 @@ namespace StatisticsProject.GraphicsObjects
                 this.G.DrawEllipse(this.BorderColor, x, y, width, height);
                 this.G.FillEllipse(Brushes.Blue, x, y, width, height);
             }
+        }
+        public void DrawRegressionLines(int Variable)
+        {
+
+        }
+        public void DrawPaths()
+        {
+
         }
         #endregion
 

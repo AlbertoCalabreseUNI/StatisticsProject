@@ -49,6 +49,7 @@
     <Compile Include="DataObjects\DataPoint.cs" />
     <Compile Include="DataObjects\Histogram.cs" />
     <Compile Include="DataObjects\Interval.cs" />
+    <Compile Include="DataObjects\RegressionLine.cs" />
     <Compile Include="DataObjects\Scatterplot.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
