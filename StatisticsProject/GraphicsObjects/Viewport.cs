@@ -106,8 +106,8 @@ namespace StatisticsProject.GraphicsObjects
             switch (Form1.GraphTypeToDraw)
             {
                 case 0: case 1: case 2: case 3:
-                    this.DrawIntervals();
                     this.DrawHistogram(Form1.GraphTypeToDraw);
+                    this.DrawIntervals();
                     break;
                 default:
                     break;
@@ -130,11 +130,7 @@ namespace StatisticsProject.GraphicsObjects
                     else G.DrawString(XIntervals[i-1].UpperBound.ToString(), this.Font, Brushes.Black, P2);
                 }
             }
-            //We do not want to draw Y intervals when we draw the classical Histogram, we want to draw count
-            if(Form1.GraphTypeToDraw == 0)
-            {
-                return;
-            }
+            
             if (this.YIntervals.Count != 0)
             {
                 for (int i = 0; i <= this.YIntervals.Count; i++)
@@ -142,15 +138,29 @@ namespace StatisticsProject.GraphicsObjects
                     Point P1 = new Point(this.Area.X - 5, this.Area.Y + (i * (this.Area.Height / this.YIntervals.Count)));
                     Point P2 = new Point(this.Area.X + 5, this.Area.Y + (i * (this.Area.Height / this.YIntervals.Count)));
                     G.DrawLine(Pens.Black, P1, P2);
+
+                    //We do not want to draw Y intervals when we draw the classical Histogram, we want to draw count
                     //"Hardcoded" fix for more pleasant rendering of Intervals
-                    if (i != this.YIntervals.Count) G.DrawString(YIntervals[YIntervals.Count - i - 1].UpperBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
-                    else G.DrawString(YIntervals[0].LowerBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                    if(Form1.GraphTypeToDraw != 0)
+                    {
+                        if (i != this.YIntervals.Count) G.DrawString(YIntervals[YIntervals.Count - i - 1].UpperBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                        else G.DrawString(YIntervals[0].LowerBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                    } 
+                    else
+                    {
+                        if (i != this.YIntervals.Count) G.DrawString(YIntervals[YIntervals.Count - i - 1].UpperBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                        else G.DrawString(YIntervals[0].LowerBound.ToString(), this.Font, Brushes.Black, P1.X - 20, P1.Y);
+                    }  
                 }
             }
         }
         public void DrawHistogram(int GraphType)
         {
-            //Let's avoid repopulating all the Lists everytime we move the Viewport
+            //Let's avoid repopulating the X Intervals everytime we move the Viewport. But we need to repopulate the Y Intervals
+            //for visualization purposes
+            //We manually define the intervals for the classic Histogram on Students.
+            //For next charts we'll have intervals be different
+            
             if (this.XIntervals.Count == 0)
             {
                 this.XIntervals = new List<Interval>();
@@ -158,12 +168,20 @@ namespace StatisticsProject.GraphicsObjects
                     XIntervals.Add(new Interval(this.MinWeight + i, this.MinWeight + i + this.Interval));
             }
 
-            if (this.YIntervals.Count == 0)
+            YIntervals.Clear();
+            //If we display DefaultHistogram (GraphTypeToDraw == 0) then we want the Y intervals to be a count of elements
+            if (Form1.GraphTypeToDraw != 0)
             {
                 //new Interval(50 + 0, 50 + 0 + 10)
                 for (int i = 0; i < this.MaxHeight - this.MinHeight; i += this.Interval)
                     YIntervals.Add(new Interval(this.MinHeight + i, this.MinHeight + i + this.Interval));
             }
+            else
+            {
+                for (int i = 0; i < this.NumberOfStudents; i += this.Interval)
+                    YIntervals.Add(new Interval(i, i + this.Interval));
+            }
+                
 
             if (this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
             {
@@ -216,6 +234,18 @@ namespace StatisticsProject.GraphicsObjects
             this.Area = new Rectangle(this.AreaOnMouseDown.X, this.AreaOnMouseDown.Y, this.AreaOnMouseDown.Width + DeltaX, this.AreaOnMouseDown.Height + DeltaY);
 
             this.RedrawAfterMoveOrResize();
+        }
+        #endregion
+
+        #region Create new data
+        public void ResetData()
+        {
+            this.NumberOfStudents = RandomGenerator.Random.Next(20, 100);
+            
+            this.DataSet.Clear();
+            
+            this.XIntervals.Clear();
+            this.YIntervals.Clear();
         }
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using StatisticsProject.GraphicsObjects;
+﻿using StatisticsProject.Generators;
+using StatisticsProject.GraphicsObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -56,7 +57,17 @@ namespace StatisticsProject
                 viewport.RedrawAfterMoveOrResize();
         }
 
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e) { GraphTypeToDraw = this.comboBox1.SelectedIndex; }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            foreach (Viewport viewport in this.viewports)
+            {
+                viewport.ResetData();
+                viewport.DrawViewport();
+            }
+                
+        }
+
+        private void comboBox1_SelectedValueChanged(object sender, EventArgs e) {  GraphTypeToDraw = this.comboBox1.SelectedIndex; }
 
         #region Viewport Controller
         //We handle picturebox mouse in Form1 as it makes more sense since it's an instanced object inside the Form1 instance.
