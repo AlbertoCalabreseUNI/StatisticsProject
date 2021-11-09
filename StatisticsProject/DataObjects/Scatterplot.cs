@@ -24,7 +24,7 @@ namespace StatisticsProject.DataObjects
         public List<Point> ComputeScatterPlot(Viewport VP)
         {
             List<Point> ConvertedPoints = new List<Point>();
-            ConvertedPoints = WindowToViewportConverter.WorldToViewportPointConversion(VP, this.DataPoints);
+            ConvertedPoints = WindowToViewportConverter.WorldToViewportPointsConversion(VP, this.DataPoints);
 
             return ConvertedPoints;
         }
