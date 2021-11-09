@@ -62,7 +62,8 @@ namespace StatisticsProject
             "Default Histogram",
             "Top Vertical Histogram",
             "Right Edge Horizontal Histogram",
-            "Top&Right Histograms"});
+            "Top&Right Histograms",
+            "Scatterplot"});
             this.comboBox1.Location = new System.Drawing.Point(1033, 597);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(217, 24);

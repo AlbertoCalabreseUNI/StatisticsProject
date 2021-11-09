@@ -49,15 +49,20 @@ namespace StatisticsProject.GraphicsObjects
         List<Rectangle> RectanglesToDraw = new List<Rectangle>();
 
         //List of DataSets for each Chart Type
-        #region DEFAULT HISTOGRAMS */
+        #region HISTOGRAMS
         //Let's create a DataSet of Random Elements and then Compute an Histogram
-        public int MinWeight = 40;
-        public int MaxWeight = 100;
-        public int MinHeight = 140;
-        public int MaxHeight = 200;
+        public int XAttributeMin = 40;
+        public int XAttributeMax = 100;
+        public int YAttributeMin = 140;
+        public int YAttributeMax = 200;
         public int NumberOfStudents;
 
         public Histogram StudentHistogram;
+        #endregion
+        #region SCATTERPLOT
+        public Scatterplot Scatterplot;
+        public List<Point> PointsToDraw;
+        public int PointSize = 5;
         #endregion
 
         #endregion
@@ -107,6 +112,11 @@ namespace StatisticsProject.GraphicsObjects
             {
                 case 0: case 1: case 2: case 3:
                     this.DrawHistogram(Form1.GraphTypeToDraw);
+                    this.DrawIntervals();
+                    break;
+                case 4: //To Draw a Scatterplot I need to generate the data from the Histogram
+                    this.DrawHistogram(3);
+                    this.DrawScatterPlot();
                     this.DrawIntervals();
                     break;
                 default:
@@ -164,17 +174,17 @@ namespace StatisticsProject.GraphicsObjects
             if (this.XIntervals.Count == 0)
             {
                 this.XIntervals = new List<Interval>();
-                for (int i = 0; i < this.MaxWeight - this.MinWeight; i += this.Interval)
-                    XIntervals.Add(new Interval(this.MinWeight + i, this.MinWeight + i + this.Interval));
+                for (int i = 0; i < this.XAttributeMax - this.XAttributeMin; i += this.Interval)
+                    XIntervals.Add(new Interval(this.XAttributeMin + i, this.XAttributeMin + i + this.Interval));
             }
 
             YIntervals.Clear();
             //If we display DefaultHistogram (GraphTypeToDraw == 0) then we want the Y intervals to be a count of elements
-            if (Form1.GraphTypeToDraw != 0)
+            if (GraphType != 0)
             {
                 //new Interval(50 + 0, 50 + 0 + 10)
-                for (int i = 0; i < this.MaxHeight - this.MinHeight; i += this.Interval)
-                    YIntervals.Add(new Interval(this.MinHeight + i, this.MinHeight + i + this.Interval));
+                for (int i = 0; i < this.YAttributeMax - this.YAttributeMin; i += this.Interval)
+                    YIntervals.Add(new Interval(this.YAttributeMin + i, this.YAttributeMin + i + this.Interval));
             }
             else
             {
@@ -185,11 +195,11 @@ namespace StatisticsProject.GraphicsObjects
 
             if (this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
             {
-                this.DataSet = RandomGenerator.GenerateRandomStudentsList(this.NumberOfStudents, this.MinWeight, this.MaxWeight, this.MinHeight, this.MaxHeight);
+                this.DataSet = RandomGenerator.GenerateRandomStudentsList(this.NumberOfStudents, this.XAttributeMin, this.XAttributeMax, this.YAttributeMin, this.YAttributeMax);
                 this.StudentHistogram = new Histogram(this.DataSet, this.XIntervals, this.YIntervals);
             }
 
-            switch(Form1.GraphTypeToDraw)
+            switch(GraphType)
             {
                 case 0:
                     this.RectanglesToDraw = this.StudentHistogram.ComputeDefaultHistogram(this, 0/*0 = X Variable, 1 = Y Variable*/);
@@ -209,10 +219,40 @@ namespace StatisticsProject.GraphicsObjects
                     break;
             }
 
-            foreach (Rectangle Rectangle in this.RectanglesToDraw)
+            this.G.DrawRectangles(this.BorderColor, this.RectanglesToDraw.ToArray());
+            this.G.FillRectangles(Brushes.Red, this.RectanglesToDraw.ToArray());
+        }
+        public void DrawScatterPlot()
+        {
+            if (this.XIntervals.Count == 0)
             {
-                this.G.DrawRectangles(this.BorderColor, this.RectanglesToDraw.ToArray());
-                this.G.FillRectangles(Brushes.Red, this.RectanglesToDraw.ToArray());
+                this.XIntervals = new List<Interval>();
+                for (int i = 0; i < this.XAttributeMax - this.XAttributeMin; i += this.Interval)
+                    XIntervals.Add(new Interval(this.XAttributeMin + i, this.XAttributeMin + i + this.Interval));
+            }
+
+            if (this.YIntervals.Count == 0)
+            {
+                for (int i = 0; i < this.YAttributeMax - this.YAttributeMin; i += this.Interval)
+                    YIntervals.Add(new Interval(this.YAttributeMin + i, this.YAttributeMin + i + this.Interval));
+            }
+
+            if (this.Scatterplot == null) //We need to generate the scatterplot only once
+                this.Scatterplot = new Scatterplot(this.DataSet, this.XIntervals, this.YIntervals);
+
+            PointsToDraw = Scatterplot.ComputeScatterPlot(this);
+            this.PointSize = this.Area.Width / (this.XIntervals.Count * 20);
+
+            foreach (Point ViewportPoint in this.PointsToDraw)
+            {
+                /* This allows me to draw the points using the point as Center and not as start corner */
+                float x = ViewportPoint.X - this.PointSize;
+                float y = ViewportPoint.Y - this.PointSize;
+                float width = 2 * this.PointSize;
+                float height = 2 * this.PointSize;
+
+                this.G.DrawEllipse(this.BorderColor, x, y, width, height);
+                this.G.FillEllipse(Brushes.Blue, x, y, width, height);
             }
         }
         #endregion
@@ -243,6 +283,7 @@ namespace StatisticsProject.GraphicsObjects
             this.NumberOfStudents = RandomGenerator.Random.Next(20, 100);
             
             this.DataSet.Clear();
+            this.Scatterplot = null;
             
             this.XIntervals.Clear();
             this.YIntervals.Clear();

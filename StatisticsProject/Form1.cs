@@ -62,9 +62,8 @@ namespace StatisticsProject
             foreach (Viewport viewport in this.viewports)
             {
                 viewport.ResetData();
-                viewport.DrawViewport();
-            }
-                
+                viewport.RedrawAfterMoveOrResize();
+            }  
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e) {  GraphTypeToDraw = this.comboBox1.SelectedIndex; }
