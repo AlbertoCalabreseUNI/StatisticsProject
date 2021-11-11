@@ -249,6 +249,7 @@ namespace StatisticsProject.GraphicsObjects
 
             PointsToDraw = Scatterplot.ComputeScatterPlot(this);
             this.PointSize = this.Area.Width / (this.XIntervals.Count * 20);
+            int index = 0; //This is used only to iterate the DataSet for drawing strings
 
             foreach (Point ViewportPoint in this.PointsToDraw)
             {
@@ -260,6 +261,8 @@ namespace StatisticsProject.GraphicsObjects
 
                 this.G.DrawEllipse(this.BorderColor, x, y, width, height);
                 this.G.FillEllipse(Brushes.Blue, x, y, width, height);
+                this.G.DrawString(this.DataSet.ElementAt(index).X.ToString() + "," + this.DataSet.ElementAt(index).Y.ToString(), this.Font, Brushes.Red, new PointF(ViewportPoint.X,ViewportPoint.Y));
+                index++;
             }
         }
         public void DrawRegressionLines(int Variable)

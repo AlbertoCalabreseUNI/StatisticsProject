@@ -51,7 +51,7 @@ namespace StatisticsProject.Utils
 
 
         #region Getters for Min and Max X/Y
-        private static double GetMinY(List<DataPoint> PointsToConvert)
+        public static double GetMinY(List<DataPoint> PointsToConvert)
         {
             double MinY = PointsToConvert[0].Y; //We must declare an initial value
             foreach (DataPoint p in PointsToConvert)
@@ -61,7 +61,7 @@ namespace StatisticsProject.Utils
             return MinY;
         }
 
-        private static double GetMinX(List<DataPoint> PointsToConvert)
+        public static double GetMinX(List<DataPoint> PointsToConvert)
         {
             double MinX = PointsToConvert[0].X; //We must declare an initial value
             foreach (DataPoint p in PointsToConvert)
@@ -71,7 +71,7 @@ namespace StatisticsProject.Utils
             return MinX;
         }
 
-        private static double GetMaxX(List<DataPoint> PointsToConvert)
+        public static double GetMaxX(List<DataPoint> PointsToConvert)
         {
             double MaxX = PointsToConvert[0].X; //We must declare an initial value
             foreach (DataPoint p in PointsToConvert)
@@ -81,7 +81,7 @@ namespace StatisticsProject.Utils
             return MaxX;
         }
 
-        private static double GetMaxY(List<DataPoint> PointsToConvert)
+        public static double GetMaxY(List<DataPoint> PointsToConvert)
         {
             double MaxY = PointsToConvert[0].Y; //We must declare an initial value
             foreach (DataPoint p in PointsToConvert)

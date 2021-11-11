@@ -86,7 +86,7 @@ namespace StatisticsProject
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(99, 64);
             this.button3.TabIndex = 4;
-            this.button3.Text = "Regenerate Histogram Data";
+            this.button3.Text = "Regenerate Data Set";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
