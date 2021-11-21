@@ -1,6 +1,7 @@
 ﻿using StatisticsProject.DataObjects;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,18 @@ namespace StatisticsProject.Generators
                 TempList.Add(new DataPoint((double)Random.Next(MinWeight, MaxWeight), (double)Random.Next(MinHeight, MaxHeight)));
 
             return TempList;
+        }
+
+        public static double BernoulliGenerator()
+        {
+            double RandomChance = Random.NextDouble();
+            if (RandomChance < Form1.SuccessProbability) return 1;
+            return 0;
+        }
+
+        public static Color GenerateRandomColor()
+        {
+            return Color.FromArgb(Random.Next(255), Random.Next(255), Random.Next(255));
         }
     }
 }

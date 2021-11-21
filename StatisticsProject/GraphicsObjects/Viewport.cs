@@ -44,6 +44,7 @@ namespace StatisticsProject.GraphicsObjects
         List<Interval> YIntervals = new List<Interval>();
 
         List<DataPoint> DataSet = new List<DataPoint>();
+        List<RandomPath> RandomPaths = new List<RandomPath>();
 
         //This is a List used in common by all types of Histograms
         List<Rectangle> RectanglesToDraw = new List<Rectangle>();
@@ -125,6 +126,9 @@ namespace StatisticsProject.GraphicsObjects
                     this.DrawScatterPlot();
                     this.DrawRegressionLines(2); /* 0 = X Axis Only, 1 = Y Axis Only, 2 =  Both*/
                     this.DrawIntervals();
+                    break;
+                case 6:
+                    this.DrawPaths(Form1.FrequencyMode);
                     break;
                 default:
                     break;
@@ -269,9 +273,21 @@ namespace StatisticsProject.GraphicsObjects
         {
 
         }
-        public void DrawPaths()
+        public void DrawPaths(int mode = 0)
         {
-
+            if (this.RandomPaths.Count == 0)
+            {
+                for (int i = 0; i < Form1.NumberOfPaths; i++)
+                {
+                    this.RandomPaths.Add(new RandomPath());
+                }
+            }
+            for(int i = 0; i < Form1.NumberOfPaths; i++)
+            {
+                RandomPaths[i].ComputePath();
+                List<Point> ToDraw = this.RandomPaths[i].ComputePointsToDraw(this);
+                this.G.DrawLines(new Pen(RandomPaths[i].PathColor), ToDraw.ToArray());
+            }
         }
         #endregion
 
@@ -305,6 +321,8 @@ namespace StatisticsProject.GraphicsObjects
             
             this.XIntervals.Clear();
             this.YIntervals.Clear();
+
+            this.RandomPaths.Clear();
         }
         #endregion
     }

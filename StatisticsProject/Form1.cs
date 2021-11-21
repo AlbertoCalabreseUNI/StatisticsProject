@@ -18,11 +18,11 @@ namespace StatisticsProject
         public static int GraphTypeToDraw;
 
         //Random Paths Generator
-        public static int NumberOfPaths = 100;
-        public static int PathSize = 50;
-        //public static int InstantToPlotInstogram = 50;
-        public static double SuccessProbability = 50 / 100;
-        public static int RelativeFrequencyMode = 0;
+        public static int NumberOfPaths;
+        public static int PathSize;
+        public static double SuccessProbability;
+        
+        public static int FrequencyMode;
         
         public Form1()
         {
@@ -43,6 +43,12 @@ namespace StatisticsProject
             this.pictureBox1.MouseMove += this.PictureBox1_MouseMove;
 
             GraphTypeToDraw = this.comboBox1.SelectedIndex;
+
+            NumberOfPaths = this.trackBar1.Value;
+            PathSize = this.trackBar2.Value;
+            SuccessProbability = (double) 50 / 100;
+
+            FrequencyMode = this.comboBox2.SelectedIndex;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -67,6 +73,13 @@ namespace StatisticsProject
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e) {  GraphTypeToDraw = this.comboBox1.SelectedIndex; }
+
+        #region Paths Trackbars + Frequency
+        private void trackBar1_ValueChanged(object sender, EventArgs e) { NumberOfPaths = this.trackBar1.Value; }
+        private void trackBar2_ValueChanged(object sender, EventArgs e){ PathSize = this.trackBar2.Value; }
+        private void trackBar3_ValueChanged(object sender, EventArgs e){ SuccessProbability = this.trackBar3.Value / 100; }
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e) { FrequencyMode = this.comboBox2.SelectedIndex; }
+        #endregion
 
         #region Viewport Controller
         //We handle picturebox mouse in Form1 as it makes more sense since it's an instanced object inside the Form1 instance.
@@ -109,5 +122,7 @@ namespace StatisticsProject
             }
         }
         #endregion
+
+
     }
 }
