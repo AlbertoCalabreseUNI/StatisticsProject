@@ -52,6 +52,7 @@
     <Compile Include="DataObjects\RandomPath.cs" />
     <Compile Include="DataObjects\RegressionLine.cs" />
     <Compile Include="DataObjects\Scatterplot.cs" />
+    <Compile Include="DataObjects\Sequence.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

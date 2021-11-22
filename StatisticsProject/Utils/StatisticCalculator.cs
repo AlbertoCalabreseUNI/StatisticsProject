@@ -198,7 +198,6 @@ namespace StatisticsProject.Utils
         {
             List<Point> PointsForLine = new List<Point>();
 
-
             return PointsForLine;
         }
     }

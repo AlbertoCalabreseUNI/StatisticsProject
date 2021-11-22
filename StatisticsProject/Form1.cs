@@ -121,8 +121,7 @@ namespace StatisticsProject
                     vp.ResizeArea(deltaX, deltaY);
             }
         }
+
         #endregion
-
-
     }
 }

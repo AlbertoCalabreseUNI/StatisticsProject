@@ -21,10 +21,37 @@ namespace StatisticsProject.Utils
             double MaxX = GetMaxX(PointsToConvert);
             double MaxY = GetMaxY(PointsToConvert);
 
+            /* This is needed to make Absolute Frequency work*/
+            if (Form1.GraphTypeToDraw == 6 && Form1.FrequencyMode == 1)
+                MinY = 0; MaxY = 1;
+
             double RangeX = MaxX - MinX;
             double RangeY = MaxY - MinY;
 
             foreach(DataPoint Point in PointsToConvert)
+            {
+                int XConverted = XPosScale(Viewport, Point.X, MinX, RangeX);
+                int YConverted = YPosScale(Viewport, Point.Y, MinY, RangeY);
+
+                ConvertedPoints.Add(new Point(XConverted, YConverted));
+            }
+
+            return ConvertedPoints;
+        }
+
+        public static List<Point> WorldToViewportPointsConversionPaths(Viewport Viewport, List<DataPoint> PointsToConvert, List<DataPoint> AllPathsPoints)
+        {
+            List<Point> ConvertedPoints = new List<Point>();
+
+            double MinX = GetMinX(AllPathsPoints);
+            double MinY = GetMinY(AllPathsPoints);
+            double MaxX = GetMaxX(AllPathsPoints);
+            double MaxY = GetMaxY(AllPathsPoints);
+
+            double RangeX = MaxX - MinX;
+            double RangeY = MaxY - MinY;
+
+            foreach (DataPoint Point in PointsToConvert)
             {
                 int XConverted = XPosScale(Viewport, Point.X, MinX, RangeX);
                 int YConverted = YPosScale(Viewport, Point.Y, MinY, RangeY);

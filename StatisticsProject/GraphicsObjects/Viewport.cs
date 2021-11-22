@@ -128,7 +128,7 @@ namespace StatisticsProject.GraphicsObjects
                     this.DrawIntervals();
                     break;
                 case 6:
-                    this.DrawPaths(Form1.FrequencyMode);
+                    this.DrawPaths();
                     break;
                 default:
                     break;
@@ -273,20 +273,23 @@ namespace StatisticsProject.GraphicsObjects
         {
 
         }
-        public void DrawPaths(int mode = 0)
+        public void DrawPaths()
         {
-            if (this.RandomPaths.Count == 0)
+            if(Form1.NumberOfPaths != this.RandomPaths.Count)
             {
+                this.RandomPaths.Clear();
                 for (int i = 0; i < Form1.NumberOfPaths; i++)
-                {
                     this.RandomPaths.Add(new RandomPath());
-                }
             }
-            for(int i = 0; i < Form1.NumberOfPaths; i++)
+
+            foreach(RandomPath path in this.RandomPaths)
+                path.ComputePath();
+
+            Sequence Sequence = new Sequence(this.RandomPaths);
+
+            foreach(RandomPath path in Sequence.AllPaths)
             {
-                RandomPaths[i].ComputePath();
-                List<Point> ToDraw = this.RandomPaths[i].ComputePointsToDraw(this);
-                this.G.DrawLines(new Pen(RandomPaths[i].PathColor), ToDraw.ToArray());
+                G.DrawLines(new Pen(path.PathColor), Sequence.ComputePointsToDraw(this, path).ToArray());
             }
         }
         #endregion

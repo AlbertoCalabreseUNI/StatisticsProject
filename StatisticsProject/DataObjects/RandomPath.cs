@@ -12,7 +12,7 @@ namespace StatisticsProject.DataObjects
 {
     public class RandomPath
     {
-        public Color PathColor { get; }
+        public Color PathColor;
         public List<DataPoint> Path = new List<DataPoint>();
         public List<Double> PathPoints = new List<Double>();
 
@@ -20,30 +20,30 @@ namespace StatisticsProject.DataObjects
         {
             this.PathColor = RandomGenerator.GenerateRandomColor();
             this.PopulatePathPoints();
-            this.Path = ComputePath();
         }
 
+        //This generates an array of 0 and 1s where 0 means the point was not created and 1 it was.
         public void PopulatePathPoints()
         {
             for (int i = 0; i < Form1.PathSize; i++)
-            {
                 this.PathPoints.Add(RandomGenerator.BernoulliGenerator());
-            }
         }
 
         public List<DataPoint> ComputePath()
         {
+            //This is needed to recalculate Data Points every time viewport is moved/mode changes
             this.Path.Clear();
-            //Trajectory Calculation
+            
             if (Form1.FrequencyMode == 0)
             {
-                int count = 0;
+                double count = 0;
                 for (int i = 0; i < PathPoints.Count; i++)
                 {
                     if (PathPoints[i] == 1)
                         count++;
 
-                    Path.Add(new DataPoint(i, (double) count / (i + 1)));
+                    double NormalisedY = (count) / (i + 1);
+                    Path.Add(new DataPoint(i, NormalisedY));
                 }
             }
             else if (Form1.FrequencyMode == 1)
@@ -51,29 +51,31 @@ namespace StatisticsProject.DataObjects
                 //Path must have at least one DataPoint in order to work correctly.
                 //The first point will be the data point of X = 0 (first point) and Y = the
                 //First element of PathPoints (Either 0 or 1 from the bernoulli generator)
-                Path.Add(new DataPoint(0,PathPoints.First()));
-                for (int i = 1; i < PathPoints.Count; i++)
-                    Path.Add(new DataPoint(i, PathPoints[i-1] + PathPoints[i]));
+                Path.Add(new DataPoint(0,this.PathPoints[0]));
+                for (int i = 1; i < this.PathPoints.Count; i++)
+                    Path.Add(new DataPoint(i, this.Path[i-1].Y + this.PathPoints[i]));
             }
             else
             {
-                int count = 0;
+                double count = 0;
                 double q = 1 - Form1.SuccessProbability;
                 for(int i = 0; i < PathPoints.Count; i++)
                 {
                     if (PathPoints[i] == 1)
-                        Path.Add(new DataPoint(i, (((double)count / (i + 1)) - Form1.SuccessProbability) / Math.Sqrt((double)Form1.SuccessProbability * q / (i + 1))));
+                        count++;
+
+                    Path.Add(new DataPoint(i, ((count / (i + 1)) - Form1.SuccessProbability) / Math.Sqrt(Form1.SuccessProbability * q / (i + 1))));
                 }
             }
 
             return this.Path;
         }
 
-        public List<Point> ComputePointsToDraw(Viewport VP)
+        public void ResetPath()
         {
-            List<Point> points = WindowToViewportConverter.WorldToViewportPointsConversion(VP, this.Path);
-
-            return points;
+            this.Path.Clear();
+            this.PathPoints.Clear();
+            this.PathColor = RandomGenerator.GenerateRandomColor();
         }
     }
 }
