@@ -233,9 +233,9 @@ namespace StatisticsProject.GraphicsObjects
                 YIntervals.Clear();
                 /* Creating intervals for Brownian at time N */
                 /* We need to compute the PointsAtTimeN here since we need it to calculate the intervals */
-                this.PointsAtTimeN = this.Sequence.TakePointsAtTimeN(Form1.TimeT);
-                MinY = WindowToViewportConverter.GetMinY(this.PointsAtTimeN);
-                MaxY = WindowToViewportConverter.GetMaxY(this.PointsAtTimeN);
+                this.PointsAtTimeT = this.Sequence.TakePointsAtTimeN(Form1.TimeT);
+                MinY = WindowToViewportConverter.GetMinY(this.PointsAtTimeT);
+                MaxY = WindowToViewportConverter.GetMaxY(this.PointsAtTimeT);
 
                 //We want to have 10 intervals only for now it's hardcoded.
                 RangeY = (MaxY - MinY) / 10;
@@ -244,7 +244,7 @@ namespace StatisticsProject.GraphicsObjects
                     YIntervals.Add(new Interval(MinY + (i * RangeY), MinY + ((i + 1) * RangeY)));
 
                 //For Brownian
-                this.SequenceHistogramAtT = new Histogram(this.PointsAtTimeN, XIntervals, YIntervals, 1);
+                this.SequenceHistogramAtT = new Histogram(this.PointsAtTimeT, XIntervals, YIntervals, 1);
             }           
 
             if (this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
