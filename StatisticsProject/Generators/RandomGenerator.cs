@@ -27,6 +27,21 @@ namespace StatisticsProject.Generators
             return 0;
         }
 
+        /* Implementation taken from: https://en.wikipedia.org/wiki/Marsaglia_polar_method */
+        public static double GenerateNormalVariable()
+        {
+            double u, v, s;
+            do
+            {
+                u = Random.NextDouble() * 2 - 1;
+                v = Random.NextDouble() * 2 - 1;
+                s = u * u + v * v;
+            } while (s > 1);
+
+            double x = v * Math.Sqrt(-2.0 * Math.Log(s) / s);
+            return x;
+        }
+
         public static Color GenerateRandomColor()
         {
             return Color.FromArgb(Random.Next(255), Random.Next(255), Random.Next(255));

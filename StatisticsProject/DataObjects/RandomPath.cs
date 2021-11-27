@@ -20,13 +20,18 @@ namespace StatisticsProject.DataObjects
         {
             this.PathColor = RandomGenerator.GenerateRandomColor();
             this.PopulatePathPoints();
+            /* Only for Brownian */
+            if (Form1.FrequencyMode == 3) this.ComputePath();
         }
 
         //This generates an array of 0 and 1s where 0 means the point was not created and 1 it was.
         public void PopulatePathPoints()
         {
             for (int i = 0; i < Form1.PathSize; i++)
-                this.PathPoints.Add(RandomGenerator.BernoulliGenerator());
+            {
+                if(Form1.FrequencyMode < 3) /* We do not want to populate PathPoints if the mode is Brownian */
+                    this.PathPoints.Add(RandomGenerator.BernoulliGenerator());
+            }
         }
 
         public List<DataPoint> ComputePath()
@@ -55,7 +60,7 @@ namespace StatisticsProject.DataObjects
                 for (int i = 1; i < this.PathPoints.Count; i++)
                     Path.Add(new DataPoint(i, this.Path[i-1].Y + this.PathPoints[i]));
             }
-            else
+            else if(Form1.FrequencyMode == 2)
             {
                 double count = 0;
                 double q = 1 - Form1.SuccessProbability;
@@ -65,6 +70,23 @@ namespace StatisticsProject.DataObjects
                         count++;
 
                     Path.Add(new DataPoint(i, ((count / (i + 1)) - Form1.SuccessProbability) / Math.Sqrt(Form1.SuccessProbability * q / (i + 1))));
+                }
+            }
+            /* Brownian */
+            else
+            {
+                /* Like FrequencyMode == 1, we need at least one point existing in the Path */
+                double Normal = RandomGenerator.GenerateNormalVariable();
+                double SquareRoot = Math.Sqrt(1 / (double) Form1.PathSize); //This never changes during computation
+                double value = Form1.Sigma * SquareRoot * Normal;
+
+                Path.Add(new DataPoint(0, value));
+
+                for (int i = 1; i < Form1.PathSize; i++)
+                {
+                    Normal = RandomGenerator.GenerateNormalVariable();
+                    value = Form1.Sigma * SquareRoot * Normal;
+                    Path.Add(new DataPoint(i, Path[i - 1].Y + value));
                 }
             }
 

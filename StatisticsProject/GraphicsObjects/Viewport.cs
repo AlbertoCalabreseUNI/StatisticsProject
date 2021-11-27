@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using StatisticsProject.DataObjects;
 using StatisticsProject.Generators;
+using StatisticsProject.Utils;
 
 namespace StatisticsProject.GraphicsObjects
 {
@@ -46,6 +47,10 @@ namespace StatisticsProject.GraphicsObjects
         List<DataPoint> DataSet = new List<DataPoint>();
         List<RandomPath> RandomPaths = new List<RandomPath>();
 
+        Sequence Sequence;
+        List<DataPoint> PointsAtTimeN;
+        List<DataPoint> PointsAtTimeT;
+
         //This is a List used in common by all types of Histograms
         List<Rectangle> RectanglesToDraw = new List<Rectangle>();
 
@@ -59,6 +64,8 @@ namespace StatisticsProject.GraphicsObjects
         public int NumberOfStudents;
 
         public Histogram StudentHistogram;
+        public Histogram SequenceHistogram;
+        public Histogram SequenceHistogramAtT;
         #endregion
         #region SCATTERPLOT
         public Scatterplot Scatterplot;
@@ -108,6 +115,7 @@ namespace StatisticsProject.GraphicsObjects
              *  Both Top and Right Histograms = 3
              *  Scatterplot + Both top and Right Histograms = 4
              *  RegressionLines + Scatterplot + Both top and Right Histograms = 5
+             *  Random Paths = 6
              */
 
             switch (Form1.GraphTypeToDraw)
@@ -129,6 +137,7 @@ namespace StatisticsProject.GraphicsObjects
                     break;
                 case 6:
                     this.DrawPaths();
+                    this.DrawHistogram(4);
                     break;
                 default:
                     break;
@@ -181,7 +190,7 @@ namespace StatisticsProject.GraphicsObjects
             //for visualization purposes
             //We manually define the intervals for the classic Histogram on Students.
             //For next charts we'll have intervals be different
-            
+
             if (this.XIntervals.Count == 0)
             {
                 this.XIntervals = new List<Interval>();
@@ -202,7 +211,41 @@ namespace StatisticsProject.GraphicsObjects
                 for (int i = 0; i < this.NumberOfStudents; i += this.Interval)
                     YIntervals.Add(new Interval(i, i + this.Interval));
             }
-                
+
+            if (Form1.FrequencyMode == 3 && GraphType == 4)
+            {
+                YIntervals.Clear();
+                /* Creating intervals for Brownian at time N */
+                /* We need to compute the PointsAtTimeN here since we need it to calculate the intervals */
+                this.PointsAtTimeN = this.Sequence.TakePointsAtTimeN(Form1.PathSize);
+                double MinY = WindowToViewportConverter.GetMinY(this.PointsAtTimeN);
+                double MaxY = WindowToViewportConverter.GetMaxY(this.PointsAtTimeN);
+
+                //We want to have 10 intervals only for now it's hardcoded.
+                double RangeY = (MaxY - MinY) / 10;
+
+                for (int i = 0; i < 10; i++)
+                    YIntervals.Add(new Interval(MinY + (i * RangeY), MinY + ((i + 1)* RangeY)));
+
+                //For Brownian
+                this.SequenceHistogram = new Histogram(this.PointsAtTimeN, XIntervals, YIntervals, 1);
+
+                YIntervals.Clear();
+                /* Creating intervals for Brownian at time N */
+                /* We need to compute the PointsAtTimeN here since we need it to calculate the intervals */
+                this.PointsAtTimeN = this.Sequence.TakePointsAtTimeN(Form1.TimeT);
+                MinY = WindowToViewportConverter.GetMinY(this.PointsAtTimeN);
+                MaxY = WindowToViewportConverter.GetMaxY(this.PointsAtTimeN);
+
+                //We want to have 10 intervals only for now it's hardcoded.
+                RangeY = (MaxY - MinY) / 10;
+
+                for (int i = 0; i < 10; i++)
+                    YIntervals.Add(new Interval(MinY + (i * RangeY), MinY + ((i + 1) * RangeY)));
+
+                //For Brownian
+                this.SequenceHistogramAtT = new Histogram(this.PointsAtTimeN, XIntervals, YIntervals, 1);
+            }           
 
             if (this.DataSet.Count == 0) //If we didn't generate the DataSet yet, then do it and generate the histogram
             {
@@ -228,6 +271,13 @@ namespace StatisticsProject.GraphicsObjects
                     break;
                 default:
                     break;
+            }
+
+            /* Brownian has priority over the other histograms */
+            if(Form1.FrequencyMode == 3 && GraphType == 4)
+            {
+                this.RectanglesToDraw = this.SequenceHistogram.ComputeYHorizontalHistogram(this);
+                this.RectanglesToDraw.AddRange(this.SequenceHistogramAtT.ComputeYHorizontalHistogramAtT(this, Form1.TimeT));
             }
 
             this.G.DrawRectangles(this.BorderColor, this.RectanglesToDraw.ToArray());
@@ -282,15 +332,15 @@ namespace StatisticsProject.GraphicsObjects
                     this.RandomPaths.Add(new RandomPath());
             }
 
-            foreach(RandomPath path in this.RandomPaths)
-                path.ComputePath();
+            if(Form1.FrequencyMode != 3 && this.RandomPaths.Count != 0)
+                foreach(RandomPath path in this.RandomPaths)
+                    path.ComputePath();
+            
 
-            Sequence Sequence = new Sequence(this.RandomPaths);
+            this.Sequence = new Sequence(this.RandomPaths);
 
             foreach(RandomPath path in Sequence.AllPaths)
-            {
                 G.DrawLines(new Pen(path.PathColor), Sequence.ComputePointsToDraw(this, path).ToArray());
-            }
         }
         #endregion
 

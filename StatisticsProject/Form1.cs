@@ -21,6 +21,8 @@ namespace StatisticsProject
         public static int NumberOfPaths;
         public static int PathSize;
         public static double SuccessProbability;
+        public static double Sigma;
+        public static int TimeT;
         
         public static int FrequencyMode;
         
@@ -47,6 +49,7 @@ namespace StatisticsProject
             NumberOfPaths = this.trackBar1.Value;
             PathSize = this.trackBar2.Value;
             SuccessProbability = (double) 50 / 100;
+            Sigma = 50;
 
             FrequencyMode = this.comboBox2.SelectedIndex;
         }
@@ -56,15 +59,17 @@ namespace StatisticsProject
             foreach (Viewport viewport in this.viewports)
                 viewport.DrawViewport();
         }
-
+        //We need to get the TimeT value everytime the buttons are clicked.
         private void button2_Click(object sender, EventArgs e)
         {
+            TimeT = Int32.Parse(this.textBox1.Text);
             foreach (Viewport viewport in this.viewports)
                 viewport.RedrawAfterMoveOrResize();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            TimeT = Int32.Parse(this.textBox1.Text);
             foreach (Viewport viewport in this.viewports)
             {
                 viewport.ResetData();
@@ -78,6 +83,7 @@ namespace StatisticsProject
         private void trackBar1_ValueChanged(object sender, EventArgs e) { NumberOfPaths = this.trackBar1.Value; }
         private void trackBar2_ValueChanged(object sender, EventArgs e){ PathSize = this.trackBar2.Value; }
         private void trackBar3_ValueChanged(object sender, EventArgs e){ SuccessProbability = this.trackBar3.Value / 100; }
+        private void trackBar4_ValueChanged(object sender, EventArgs e) { Sigma = this.trackBar4.Value; }
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e) { FrequencyMode = this.comboBox2.SelectedIndex; }
         #endregion
 

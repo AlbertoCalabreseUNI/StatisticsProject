@@ -115,5 +115,35 @@ namespace StatisticsProject.DataObjects
 
             return DefaultHistogramRectangles;
         }
+
+        public List<Rectangle> ComputeYHorizontalHistogramAtT(Viewport Viewport, int T)
+        {
+            List<Rectangle> DefaultHistogramRectangles = new List<Rectangle>();
+            double RangeX = ((Viewport.Area.X + Viewport.Area.Width) / (Form1.PathSize)) * T;
+            double InitialX = Viewport.Area.X + RangeX; //We want to draw the Histogram on the right of the Viewport
+            double InitialY = Viewport.Area.Y + Viewport.Area.Height; //Starting from the bottom and then "moving" the rectangle up.
+
+            double RectangleWidthUpdate = Viewport.Area.Width / this.DataPoints.Count; //This never changes during Computing
+            double RectangleHeight = Viewport.Area.Height / this.YIntervals.Count; //Chunk to "add" to the rectangle.
+
+            //We need a certain amount of rectangles based on whether we group by value of X (0) or Y (1).
+            int NumberOfRectangles = YIntervals.Count;
+
+            for (int i = 0; i < NumberOfRectangles; i++)
+            {
+                Rectangle rect = new Rectangle((int)InitialX, (int)InitialY - ((i + 1) * (int)RectangleHeight), 0, (int)RectangleHeight); //Initial "Empty" rectangle
+                foreach (DataPoint point in this.DataPoints)
+                {
+                    if (YIntervals[i].BelongsToThisInterval(point, 1))
+                    {
+                        //We simply make the rectangle wider
+                        rect.Width += (int)RectangleWidthUpdate;
+                    }
+                }
+                DefaultHistogramRectangles.Add(rect);
+            }
+
+            return DefaultHistogramRectangles;
+        }
     }
 }

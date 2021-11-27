@@ -41,10 +41,15 @@ namespace StatisticsProject
             this.label3 = new System.Windows.Forms.Label();
             this.trackBar3 = new System.Windows.Forms.TrackBar();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.trackBar4 = new System.Windows.Forms.TrackBar();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -134,7 +139,7 @@ namespace StatisticsProject
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(598, 746);
+            this.label2.Location = new System.Drawing.Point(546, 746);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 17);
@@ -144,7 +149,7 @@ namespace StatisticsProject
             // trackBar2
             // 
             this.trackBar2.LargeChange = 10;
-            this.trackBar2.Location = new System.Drawing.Point(566, 769);
+            this.trackBar2.Location = new System.Drawing.Point(549, 769);
             this.trackBar2.Margin = new System.Windows.Forms.Padding(4);
             this.trackBar2.Maximum = 500;
             this.trackBar2.Minimum = 10;
@@ -158,7 +163,7 @@ namespace StatisticsProject
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(896, 747);
+            this.label3.Location = new System.Drawing.Point(695, 748);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 17);
@@ -168,7 +173,7 @@ namespace StatisticsProject
             // trackBar3
             // 
             this.trackBar3.LargeChange = 10;
-            this.trackBar3.Location = new System.Drawing.Point(871, 769);
+            this.trackBar3.Location = new System.Drawing.Point(686, 769);
             this.trackBar3.Margin = new System.Windows.Forms.Padding(4);
             this.trackBar3.Maximum = 100;
             this.trackBar3.Name = "trackBar3";
@@ -184,7 +189,8 @@ namespace StatisticsProject
             this.comboBox2.Items.AddRange(new object[] {
             "Absolute Frequency",
             "Relative Frequency",
-            "Normalized Frequency"});
+            "Normalized Frequency",
+            "Brownian"});
             this.comboBox2.Location = new System.Drawing.Point(1228, 743);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox2.Name = "comboBox2";
@@ -192,11 +198,56 @@ namespace StatisticsProject
             this.comboBox2.TabIndex = 11;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
+            // trackBar4
+            // 
+            this.trackBar4.LargeChange = 10;
+            this.trackBar4.Location = new System.Drawing.Point(824, 769);
+            this.trackBar4.Margin = new System.Windows.Forms.Padding(4);
+            this.trackBar4.Maximum = 300;
+            this.trackBar4.Minimum = 10;
+            this.trackBar4.Name = "trackBar4";
+            this.trackBar4.Size = new System.Drawing.Size(130, 56);
+            this.trackBar4.TabIndex = 12;
+            this.trackBar4.Value = 50;
+            this.trackBar4.ValueChanged += new System.EventHandler(this.trackBar4_ValueChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(831, 748);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(47, 17);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Sigma";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(966, 775);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(77, 22);
+            this.textBox1.TabIndex = 14;
+            this.textBox1.Text = "50";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(967, 750);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(76, 17);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Points at T";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1685, 838);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.trackBar4);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.trackBar3);
             this.Controls.Add(this.label3);
@@ -216,6 +267,7 @@ namespace StatisticsProject
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,6 +287,10 @@ namespace StatisticsProject
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TrackBar trackBar3;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TrackBar trackBar4;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label5;
     }
 }
 

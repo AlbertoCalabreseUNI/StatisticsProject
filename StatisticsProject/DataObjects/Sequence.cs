@@ -26,6 +26,17 @@ namespace StatisticsProject.DataObjects
                 AllPoints.AddRange(path.Path);
         }
 
+        public List<DataPoint> TakePointsAtTimeN(int n = 0)
+        {
+            List<DataPoint> PointsAtTimeN = new List<DataPoint>();
+            foreach(RandomPath path in this.AllPaths)
+            {
+                PointsAtTimeN.Add(path.Path[n-1]);
+            }
+
+            return PointsAtTimeN;
+        }
+
         public List<Point> ComputePointsToDraw(Viewport VP, RandomPath Path)
         {
             List<Point> ToDraw = WindowToViewportConverter.WorldToViewportPointsConversionPaths(VP, Path.Path, this.AllPoints);
